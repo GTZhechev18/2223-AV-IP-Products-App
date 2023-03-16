@@ -14,10 +14,12 @@ var app = builder.Build();
 app.UseSwagger();
 
 app.MapGet("/", () => "Hello World");
-app.UseHttpsRedirection();
-app.UseStaticFiles();
+app.MapPost("/login", (UserLogin user));
+app.MapPost("/login",
+    (Movie movie, IMovieService service) => Create(movie, service));
 
-app.UseRouting();
+app.MapGet("/get",
+    (int id,IMovieService service) => Get(id, service));
 
 app.UseAuthorization();
 
