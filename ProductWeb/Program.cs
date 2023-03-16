@@ -1,18 +1,19 @@
+using MinimalAuthAPI.Models;
+using MinimalAuthAPI.Services;
+using System.Data;
+using System.Runtime.InteropServices;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddSwaggerGen();
+builder.Services.AddSingleton<IUserService, UserService>();
+builder.Services.AddSingleton(<IMovieService, MovieService> );
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
+app.UseSwagger();
 
+app.MapGet("/", () => "Hello World");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -23,5 +24,17 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+IResult Create(Movie movie,IMovieService service)
+{
+    var result = service.Create(movie);
+    return Result.Ok(result);
+}
+
+IResult Get(int id, IMovieService service)
+{
+    var movies = service.List();
+    return Results.Ok( movies );
+}
 
 app.Run();
